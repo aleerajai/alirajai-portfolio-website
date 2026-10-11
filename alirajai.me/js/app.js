@@ -49,6 +49,51 @@ nav.querySelectorAll("a").forEach((link) => {
   });
 });
 
+// Dynamic Active Nav Indicator (ScrollSpy)
+const siteNavLinks = document.querySelectorAll(".site-nav a:not(.nav-cta)");
+const trackedSections = Array.from(siteNavLinks)
+  .map((link) => {
+    const hash = link.getAttribute("href");
+    if (hash && hash.startsWith("#")) {
+      const section = document.querySelector(hash);
+      return section ? { link, section } : null;
+    }
+    return null;
+  })
+  .filter(Boolean);
+
+const updateActiveNav = () => {
+  const scrollY = window.scrollY;
+  const triggerPoint = scrollY + 220;
+  let activeEntry = null;
+
+  for (let i = 0; i < trackedSections.length; i++) {
+    const { section } = trackedSections[i];
+    const top = section.offsetTop;
+    const height = section.offsetHeight;
+
+    if (triggerPoint >= top && triggerPoint < top + height) {
+      activeEntry = trackedSections[i];
+      break;
+    }
+  }
+
+  // If user reaches the bottom of page, activate Contact
+  const isAtBottom = (window.innerHeight + scrollY) >= (document.documentElement.scrollHeight - 70);
+  if (isAtBottom && trackedSections.length > 0) {
+    activeEntry = trackedSections[trackedSections.length - 1];
+  }
+
+  siteNavLinks.forEach((link) => link.classList.remove("is-active"));
+  if (activeEntry) {
+    activeEntry.link.classList.add("is-active");
+  }
+};
+
+window.addEventListener("scroll", updateActiveNav, { passive: true });
+window.addEventListener("resize", updateActiveNav, { passive: true });
+updateActiveNav();
+
 if (window.matchMedia("(pointer: fine)").matches) {
   window.addEventListener("mousemove", (event) => {
     const { clientX, clientY } = event;
@@ -377,6 +422,14 @@ const openCertModal = (data) => {
     if (data.link) {
       certModalVerifyBtn.href = data.link;
       certModalVerifyBtn.style.display = "inline-flex";
+      const verifyText = document.getElementById("certModalVerifyText") || certModalVerifyBtn;
+      if (data.credId) {
+        certModalVerifyBtn.setAttribute("data-copy-cred", data.credId);
+        verifyText.textContent = `Verify at DigiSkills (Copy ID: ${data.credId}) ↗`;
+      } else {
+        certModalVerifyBtn.removeAttribute("data-copy-cred");
+        verifyText.textContent = "Verify Credential Online ↗";
+      }
     } else {
       certModalVerifyBtn.style.display = "none";
     }
@@ -402,8 +455,9 @@ document.querySelectorAll(".cert-media-trigger").forEach((trigger) => {
     const issuer = trigger.getAttribute("data-issuer") || trigger.closest("[data-issuer]")?.getAttribute("data-issuer");
     const date = trigger.getAttribute("data-date") || trigger.closest("[data-date]")?.getAttribute("data-date");
     const link = trigger.getAttribute("data-link") || trigger.closest("[data-link]")?.getAttribute("data-link");
+    const credId = trigger.getAttribute("data-cred-id") || trigger.closest("[data-cred-id]")?.getAttribute("data-cred-id");
 
-    openCertModal({ img, title, issuer, date, link });
+    openCertModal({ img, title, issuer, date, link, credId });
   });
 
   trigger.addEventListener("keydown", (e) => {
@@ -421,5 +475,54 @@ window.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && certModal && certModal.classList.contains("is-open")) {
     closeCertModal();
   }
+});
+
+// ==========================================================================
+// Auto-Copy Credential ID & Notification on Verify Click
+// ==========================================================================
+const showCertToast = (message) => {
+  const toast = document.getElementById("certToast");
+  const toastText = document.getElementById("certToastText");
+  if (!toast) return;
+  if (toastText) toastText.textContent = message;
+  toast.classList.add("is-active");
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => {
+    toast.classList.remove("is-active");
+  }, 4000);
+};
+
+document.addEventListener("click", async (e) => {
+  const copyBtn = e.target.closest("[data-copy-cred]");
+  if (!copyBtn) return;
+  const credId = copyBtn.getAttribute("data-copy-cred");
+  if (!credId) return;
+
+  // 1. Copy credential ID to clipboard
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(credId);
+    } else {
+      const tempInput = document.createElement("input");
+      tempInput.value = credId;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+    }
+  } catch (err) {
+    console.error("Clipboard copy error:", err);
+  }
+
+  // 2. Immediate visual feedback on the button
+  const labelSpan = copyBtn.querySelector("span") || copyBtn;
+  const originalHtml = labelSpan.innerHTML;
+  labelSpan.innerHTML = `<span>Copied: ${credId} ✓ (Opening...)</span>`;
+  setTimeout(() => {
+    labelSpan.innerHTML = originalHtml;
+  }, 2800);
+
+  // 3. Show luxury toast notification
+  showCertToast(`✓ Credential ID "${credId}" copied to clipboard! Paste it on DigiSkills verification page.`);
 });
 

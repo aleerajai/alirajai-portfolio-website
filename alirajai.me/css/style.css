@@ -156,12 +156,25 @@ button { font: inherit; }
 .brand strong { font-weight: 600; }
 .site-nav { gap: .35rem; }
 .site-nav a {
-  padding: .7rem .85rem;
+  padding: .55rem .95rem;
   color: var(--muted);
   border-radius: 999px;
-  transition: color .2s ease, background .2s ease;
+  border: 1px solid transparent;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: color .25s ease, background .25s ease, border-color .25s ease, box-shadow .25s ease;
 }
-.site-nav a:hover { color: var(--text); background: rgba(255,255,255,.08); }
+.site-nav a:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, .08);
+}
+.site-nav a.is-active:not(.nav-cta) {
+  color: #fff;
+  background: rgba(212, 175, 103, 0.12);
+  border-color: rgba(212, 175, 103, 0.45);
+  box-shadow: 0 0 16px rgba(212, 175, 103, 0.2);
+  font-weight: 600;
+}
 .nav-toggle { display: none; }
 
 .section {
@@ -948,6 +961,51 @@ p { color: var(--muted); line-height: 1.6; font-size: 1.05rem; }
 .cert-modal__date {
   font-size: 0.84rem;
   color: var(--muted);
+}
+
+/* ==========================================================================
+   Credential Auto-Copy Floating Toast
+   ========================================================================== */
+.cert-toast {
+  position: fixed;
+  bottom: 2.2rem;
+  left: 50%;
+  transform: translate(-50%, 25px);
+  background: rgba(18, 18, 24, 0.94);
+  border: 1px solid var(--gold);
+  color: #fff;
+  padding: 0.85rem 1.4rem;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.7), 0 0 25px rgba(212, 175, 103, 0.25);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 100001;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  max-width: min(520px, 92vw);
+  text-align: center;
+}
+
+.cert-toast.is-active {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+
+.cert-toast__icon {
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+
+.cert-toast__text {
+  color: #f8f3ea;
+  line-height: 1.35;
 }
 
 .timeline {

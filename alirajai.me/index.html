@@ -454,7 +454,7 @@
               </p>
             </div>
 
-            <div class="cert-card__media cert-media-trigger" role="button" tabindex="0" aria-label="Enlarge DigiSkills WordPress Certificate" data-img="assets/images/cert-digiskills-wordpress.jpg" data-title="WordPress Training Certificate" data-issuer="DigiSkills.pk &bull; Ministry of IT &amp; Telecom / Ignite / Virtual University" data-date="Issued: May 18, 2022 &bull; Batch-01" data-link="https://digiskills.pk/verify">
+            <div class="cert-card__media cert-media-trigger" role="button" tabindex="0" aria-label="Enlarge DigiSkills WordPress Certificate" data-img="assets/images/cert-digiskills-wordpress.jpg" data-title="WordPress Training Certificate" data-issuer="DigiSkills.pk &bull; Ministry of IT &amp; Telecom / Ignite / Virtual University" data-date="Issued: May 18, 2022 &bull; Batch-01" data-link="https://digiskills.pk/verify" data-cred-id="YNPGMFZZA">
               <img src="assets/images/cert-digiskills-wordpress.jpg" alt="WordPress DigiSkills Certificate - Ali Rajai" loading="lazy">
               <div class="cert-card__overlay">
                 <span class="cert-overlay-pill">
@@ -481,10 +481,10 @@
             </div>
 
             <div class="cert-card__actions">
-              <a href="https://digiskills.pk/verify" target="_blank" rel="noopener" class="cert-action-btn cert-action-btn--verify magnetic">
-                <span>Verify at DigiSkills ↗</span>
+              <a href="https://digiskills.pk/verify" target="_blank" rel="noopener" class="cert-action-btn cert-action-btn--verify magnetic" data-copy-cred="YNPGMFZZA">
+                <span>Verify at DigiSkills (Copy ID) ↗</span>
               </a>
-              <button type="button" class="cert-action-btn cert-action-btn--view cert-media-trigger magnetic" data-img="assets/images/cert-digiskills-wordpress.jpg" data-title="WordPress Training Certificate" data-issuer="DigiSkills.pk &bull; Ministry of IT &amp; Telecom" data-date="Issued: May 18, 2022" data-link="https://digiskills.pk/verify">
+              <button type="button" class="cert-action-btn cert-action-btn--view cert-media-trigger magnetic" data-img="assets/images/cert-digiskills-wordpress.jpg" data-title="WordPress Training Certificate" data-issuer="DigiSkills.pk &bull; Ministry of IT &amp; Telecom" data-date="Issued: May 18, 2022" data-link="https://digiskills.pk/verify" data-cred-id="YNPGMFZZA">
                 <span>Enlarge View 🔍</span>
               </button>
             </div>
@@ -518,7 +518,7 @@
               </p>
             </div>
 
-            <div class="cert-card__media cert-media-trigger" role="button" tabindex="0" aria-label="Enlarge DigiSkills Graphic Design Certificate" data-img="assets/images/cert-digiskills-graphic-design.jpg" data-title="Graphic Design Training Certificate" data-issuer="DigiSkills.pk &bull; Ministry of IT &amp; Telecom / Ignite / Virtual University" data-date="Issued: May 18, 2022 &bull; Batch-01" data-link="https://digiskills.pk/verify">
+            <div class="cert-card__media cert-media-trigger" role="button" tabindex="0" aria-label="Enlarge DigiSkills Graphic Design Certificate" data-img="assets/images/cert-digiskills-graphic-design.jpg" data-title="Graphic Design Training Certificate" data-issuer="DigiSkills.pk &bull; Ministry of IT &amp; Telecom / Ignite / Virtual University" data-date="Issued: May 18, 2022 &bull; Batch-01" data-link="https://digiskills.pk/verify" data-cred-id="UBPS9PXZA">
               <img src="assets/images/cert-digiskills-graphic-design.jpg" alt="Graphic Design DigiSkills Certificate - Ali Rajai" loading="lazy">
               <div class="cert-card__overlay">
                 <span class="cert-overlay-pill">
@@ -545,10 +545,10 @@
             </div>
 
             <div class="cert-card__actions">
-              <a href="https://digiskills.pk/verify" target="_blank" rel="noopener" class="cert-action-btn cert-action-btn--verify magnetic">
-                <span>Verify at DigiSkills ↗</span>
+              <a href="https://digiskills.pk/verify" target="_blank" rel="noopener" class="cert-action-btn cert-action-btn--verify magnetic" data-copy-cred="UBPS9PXZA">
+                <span>Verify at DigiSkills (Copy ID) ↗</span>
               </a>
-              <button type="button" class="cert-action-btn cert-action-btn--view cert-media-trigger magnetic" data-img="assets/images/cert-digiskills-graphic-design.jpg" data-title="Graphic Design Training Certificate" data-issuer="DigiSkills.pk &bull; Ministry of IT &amp; Telecom" data-date="Issued: May 18, 2022" data-link="https://digiskills.pk/verify">
+              <button type="button" class="cert-action-btn cert-action-btn--view cert-media-trigger magnetic" data-img="assets/images/cert-digiskills-graphic-design.jpg" data-title="Graphic Design Training Certificate" data-issuer="DigiSkills.pk &bull; Ministry of IT &amp; Telecom" data-date="Issued: May 18, 2022" data-link="https://digiskills.pk/verify" data-cred-id="UBPS9PXZA">
                 <span>Enlarge View 🔍</span>
               </button>
             </div>
@@ -661,10 +661,16 @@
       <div class="cert-modal__footer">
         <span class="cert-modal__date" id="certModalDate"></span>
         <a class="btn btn--primary magnetic" id="certModalVerifyBtn" href="#" target="_blank" rel="noopener">
-          Verify Credential Online ↗
+          <span id="certModalVerifyText">Verify Credential Online ↗</span>
         </a>
       </div>
     </div>
+  </div>
+
+  <!-- Floating Toast Notification for Copied Credentials -->
+  <div class="cert-toast" id="certToast" aria-live="polite">
+    <span class="cert-toast__icon">📋</span>
+    <span class="cert-toast__text" id="certToastText">Credential ID copied! Paste it on the verification page.</span>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
