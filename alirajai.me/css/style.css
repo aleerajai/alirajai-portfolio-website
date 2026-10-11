@@ -92,32 +92,52 @@ button { font: inherit; }
   animation: load 1.2s ease-in-out infinite;
 }
 
-.cursor-dot,
-.cursor-ring {
-  position: fixed;
-  left: 0;
-  top: 0;
-  pointer-events: none;
-  z-index: 100000;
-  transform: translate(-50%, -50%);
-}
 .cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background: var(--gold);
+  pointer-events: none;
+  z-index: 100000;
+  margin-left: -3px;
+  margin-top: -3px;
+  will-change: transform;
+  transition: opacity 0.2s ease;
+  transform: translate3d(-100px, -100px, 0);
 }
+
 .cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 34px;
   height: 34px;
-  border: 1px solid rgba(212,175,103,.55);
+  border: 1px solid rgba(212, 175, 103, 0.6);
   border-radius: 50%;
-  transition: width .2s ease, height .2s ease, border-color .2s ease;
+  pointer-events: none;
+  z-index: 100000;
+  margin-left: -17px;
+  margin-top: -17px;
+  will-change: transform;
+  transition: width 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              height 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              margin 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s ease,
+              background 0.2s ease,
+              opacity 0.2s ease;
+  transform: translate3d(-100px, -100px, 0);
 }
+
 .cursor-ring.is-active {
-  width: 54px;
-  height: 54px;
-  border-color: rgba(248,243,234,.55);
+  width: 52px;
+  height: 52px;
+  margin-left: -26px;
+  margin-top: -26px;
+  border-color: rgba(248, 243, 234, 0.6);
+  background: rgba(212, 175, 103, 0.08);
 }
 
 .site-header {
