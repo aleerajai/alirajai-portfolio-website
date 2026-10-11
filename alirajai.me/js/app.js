@@ -99,10 +99,25 @@ const bootGsap = () => {
     
     // 0. Existing reveal animation for generic sections
     gsap.utils.toArray(".section:not(.hero) .reveal").forEach((element) => {
-      gsap.from(element, {
-        y: 42, opacity: 0, duration: 0.85, ease: "power3.out",
-        scrollTrigger: { trigger: element, start: "top 86%", once: true }
-      });
+      if (
+        element.closest(".timeline") ||
+        element.classList.contains("timeline__item") ||
+        element.classList.contains("contact__card") ||
+        element.classList.contains("about__panel") ||
+        element.classList.contains("service-card") ||
+        element.classList.contains("work-card")
+      ) return;
+
+      gsap.fromTo(element,
+        { y: 42, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.85,
+          ease: "power3.out",
+          scrollTrigger: { trigger: element, start: "top 88%", once: true }
+        }
+      );
     });
 
     // Ensure profile image is on top of the text for the slide-behind effect
@@ -169,26 +184,36 @@ const bootGsap = () => {
       }
     );
 
-    // 6. Timeline Milestones Entrance
-    gsap.from(".timeline__item", {
-      x: -40,
-      opacity: 0,
-      duration: 0.8,
-      stagger: 0.2,
-      ease: "power2.out",
-      scrollTrigger: { trigger: ".timeline", start: "top 80%", once: true }
-    });
+    // 6. Timeline Milestones Entrance (Guaranteed visibility with fromTo)
+    gsap.fromTo(".timeline__item",
+      { x: -40, opacity: 0 },
+      {
+        x: 0,
+        opacity: 1,
+        duration: 0.8,
+        stagger: 0.2,
+        ease: "power2.out",
+        scrollTrigger: { trigger: ".timeline", start: "top 85%", once: true }
+      }
+    );
 
     // 6. Section Headings Horizontal Shift
     gsap.utils.toArray(".section-heading h2, .about__panel h2").forEach((heading) => {
       gsap.to(heading, { x: 30, scrollTrigger: { trigger: heading, start: "top bottom", end: "bottom top", scrub: 1.2 } });
     });
 
-    // 7. Contact Card Cinematic Scale
-    gsap.from(".contact__card", {
-      scale: 0.9, y: 50, rotationX: 5, transformPerspective: 1000,
-      scrollTrigger: { trigger: ".contact", start: "top bottom", end: "bottom bottom", scrub: 1 }
-    });
+    // 7. Contact Card Cinematic Scale (Guaranteed visibility with fromTo)
+    gsap.fromTo(".contact__card",
+      { scale: 0.92, y: 40, opacity: 0 },
+      {
+        scale: 1,
+        y: 0,
+        opacity: 1,
+        duration: 0.85,
+        ease: "power2.out",
+        scrollTrigger: { trigger: ".contact", start: "top 85%", once: true }
+      }
+    );
 
     // 8. About Section - Full 3D Door (opens on scroll in, folds away on scroll out)
     gsap.set(".about", { perspective: 1400 });
@@ -240,7 +265,12 @@ const bootGsap = () => {
   });
 };
 
-window.addEventListener("load", bootGsap);
+window.addEventListener("load", () => {
+  bootGsap();
+  setTimeout(() => {
+    if (window.ScrollTrigger) ScrollTrigger.refresh();
+  }, 250);
+});
 
 // Copy Email to Clipboard helper
 document.querySelectorAll("[data-copy-email]").forEach((btn) => {
