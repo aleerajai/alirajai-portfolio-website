@@ -259,3 +259,137 @@ document.querySelectorAll("[data-copy-email]").forEach((btn) => {
     }
   });
 });
+
+// ==========================================================================
+// Certificates Slider & Lightbox Modal Logic
+// ==========================================================================
+const certSlider = document.getElementById("certSlider");
+const certPrevBtn = document.getElementById("certPrevBtn");
+const certNextBtn = document.getElementById("certNextBtn");
+const certCounter = document.getElementById("certCounter");
+const certCards = document.querySelectorAll(".cert-card");
+
+if (certSlider && certCards.length > 0) {
+  const updateSliderState = () => {
+    const scrollLeft = certSlider.scrollLeft;
+    const card = certCards[0];
+    const cardWidth = card ? card.offsetWidth : 360;
+    const gap = 24;
+    const scrollStep = cardWidth + gap;
+
+    const activeIndex = Math.min(
+      certCards.length,
+      Math.max(1, Math.round(scrollLeft / scrollStep) + 1)
+    );
+
+    if (certCounter) {
+      certCounter.textContent = `${String(activeIndex).padStart(2, '0')} / ${String(certCards.length).padStart(2, '0')}`;
+    }
+
+    const maxScroll = certSlider.scrollWidth - certSlider.clientWidth - 10;
+    if (certPrevBtn) certPrevBtn.disabled = scrollLeft <= 10;
+    if (certNextBtn) certNextBtn.disabled = scrollLeft >= maxScroll;
+  };
+
+  certSlider.addEventListener("scroll", updateSliderState, { passive: true });
+
+  const getScrollAmount = () => {
+    const card = certCards[0];
+    const gap = 24;
+    return card ? card.offsetWidth + gap : 360;
+  };
+
+  if (certPrevBtn) {
+    certPrevBtn.addEventListener("click", () => {
+      certSlider.scrollBy({ left: -getScrollAmount(), behavior: "smooth" });
+    });
+  }
+
+  if (certNextBtn) {
+    certNextBtn.addEventListener("click", () => {
+      certSlider.scrollBy({ left: getScrollAmount(), behavior: "smooth" });
+    });
+  }
+
+  // Keyboard navigation when slider is focused
+  certSlider.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft") {
+      certSlider.scrollBy({ left: -getScrollAmount(), behavior: "smooth" });
+    } else if (e.key === "ArrowRight") {
+      certSlider.scrollBy({ left: getScrollAmount(), behavior: "smooth" });
+    }
+  });
+
+  // Initial update
+  updateSliderState();
+}
+
+// Lightbox Modal
+const certModal = document.getElementById("certModal");
+const certModalBackdrop = document.getElementById("certModalBackdrop");
+const certModalClose = document.getElementById("certModalClose");
+const certModalImg = document.getElementById("certModalImg");
+const certModalTitle = document.getElementById("certModalTitle");
+const certModalIssuer = document.getElementById("certModalIssuer");
+const certModalDate = document.getElementById("certModalDate");
+const certModalVerifyBtn = document.getElementById("certModalVerifyBtn");
+
+const openCertModal = (data) => {
+  if (!certModal) return;
+  if (certModalImg) {
+    certModalImg.src = data.img || "";
+    certModalImg.alt = data.title || "Certificate Preview";
+  }
+  if (certModalTitle) certModalTitle.textContent = data.title || "Certificate";
+  if (certModalIssuer) certModalIssuer.innerHTML = data.issuer || "";
+  if (certModalDate) certModalDate.innerHTML = data.date || "";
+  if (certModalVerifyBtn) {
+    if (data.link) {
+      certModalVerifyBtn.href = data.link;
+      certModalVerifyBtn.style.display = "inline-flex";
+    } else {
+      certModalVerifyBtn.style.display = "none";
+    }
+  }
+
+  certModal.classList.add("is-open");
+  certModal.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+};
+
+const closeCertModal = () => {
+  if (!certModal) return;
+  certModal.classList.remove("is-open");
+  certModal.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+};
+
+document.querySelectorAll(".cert-media-trigger").forEach((trigger) => {
+  trigger.addEventListener("click", (e) => {
+    e.preventDefault();
+    const img = trigger.getAttribute("data-img") || trigger.closest("[data-img]")?.getAttribute("data-img");
+    const title = trigger.getAttribute("data-title") || trigger.closest("[data-title]")?.getAttribute("data-title");
+    const issuer = trigger.getAttribute("data-issuer") || trigger.closest("[data-issuer]")?.getAttribute("data-issuer");
+    const date = trigger.getAttribute("data-date") || trigger.closest("[data-date]")?.getAttribute("data-date");
+    const link = trigger.getAttribute("data-link") || trigger.closest("[data-link]")?.getAttribute("data-link");
+
+    openCertModal({ img, title, issuer, date, link });
+  });
+
+  trigger.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      trigger.click();
+    }
+  });
+});
+
+if (certModalClose) certModalClose.addEventListener("click", closeCertModal);
+if (certModalBackdrop) certModalBackdrop.addEventListener("click", closeCertModal);
+
+window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && certModal && certModal.classList.contains("is-open")) {
+    closeCertModal();
+  }
+});
+
