@@ -105,6 +105,7 @@ const initPreloader = () => {
         document.body.classList.remove("is-loading");
         bootGsap();
         if (window.ScrollTrigger) ScrollTrigger.refresh();
+        if (typeof updateActiveNav === "function") updateActiveNav();
       }
     },
     "-=0.55"
@@ -181,21 +182,39 @@ const updateActiveNav = () => {
   const triggerPoint = scrollY + 220;
   let activeEntry = null;
 
-  for (let i = 0; i < trackedSections.length; i++) {
-    const { section } = trackedSections[i];
-    const top = section.offsetTop;
-    const height = section.offsetHeight;
-
-    if (triggerPoint >= top && triggerPoint < top + height) {
-      activeEntry = trackedSections[i];
-      break;
-    }
-  }
-
-  // If user reaches the bottom of page, activate Contact
+  // 1. If user reaches the bottom of page, activate Contact
   const isAtBottom = (window.innerHeight + scrollY) >= (document.documentElement.scrollHeight - 70);
   if (isAtBottom && trackedSections.length > 0) {
     activeEntry = trackedSections[trackedSections.length - 1];
+  } else {
+    // 2. Scan tracked sections
+    for (let i = 0; i < trackedSections.length; i++) {
+      const { section } = trackedSections[i];
+      const top = section.offsetTop;
+      const height = section.offsetHeight;
+
+      if (triggerPoint >= top && triggerPoint < top + height) {
+        activeEntry = trackedSections[i];
+        break;
+      }
+    }
+
+    // 3. Hero / Above Services Rule:
+    // If user is at page top or anywhere above Services (including Hero & About), pin focus to About
+    if (!activeEntry && trackedSections.length > 0) {
+      const servicesTop = trackedSections[1] ? trackedSections[1].section.offsetTop : Infinity;
+      if (triggerPoint < servicesTop) {
+        activeEntry = trackedSections[0]; // 'About'
+      } else {
+        // Fallback: Pick the last section passed
+        for (let i = trackedSections.length - 1; i >= 0; i--) {
+          if (triggerPoint >= trackedSections[i].section.offsetTop) {
+            activeEntry = trackedSections[i];
+            break;
+          }
+        }
+      }
+    }
   }
 
   siteNavLinks.forEach((link) => link.classList.remove("is-active"));
