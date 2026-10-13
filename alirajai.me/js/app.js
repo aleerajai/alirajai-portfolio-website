@@ -7,8 +7,12 @@ const cursorRing = document.querySelector(".cursor-ring");
 
 window.addEventListener("load", () => {
   if (window.gsap) {
-    gsap.to(loader, { autoAlpha: 0, duration: 0.7, delay: 0.45, ease: "power2.out" });
-    gsap.from(".hero .reveal", { y: 36, opacity: 0, duration: 0.9, stagger: 0.13, delay: 0.7, ease: "power3.out" });
+    gsap.to(loader, { autoAlpha: 0, duration: 0.7, delay: 0.35, ease: "power2.out" });
+    gsap.from(".hero .reveal", { y: 36, opacity: 0, duration: 0.85, stagger: 0.12, delay: 0.5, ease: "power3.out" });
+    bootGsap();
+    setTimeout(() => {
+      if (window.ScrollTrigger) ScrollTrigger.refresh();
+    }, 400);
   } else {
     loader.style.display = "none";
   }
@@ -168,129 +172,200 @@ const bootGsap = () => {
   if (!window.gsap || !window.ScrollTrigger) return;
   gsap.registerPlugin(ScrollTrigger);
 
+  // Configure ScrollTrigger for maximum stability and zero-lag recovery
+  ScrollTrigger.config({ limitCallbacks: true, syncInterval: 100 });
+
   let mm = gsap.matchMedia();
 
-  // Desktop Animations (min-width: 821px) - 100% Solid, Guaranteed Visibility, No Stuck States
+  // --- DESKTOP 3D SIGNATURE ANIMATIONS (min-width: 821px) ---
   mm.add("(min-width: 821px)", () => {
-    // Subtle gentle vertical parallax on Hero profile card (Hero text stays rock-solid & 100% readable)
-    gsap.to(".hero-image-wrapper", {
-      y: 40,
-      scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1 }
+    // 1. HERO SECTION: Signature 3D Text Slide-Behind & Profile Card Tilt
+    gsap.set(".hero__visual", { zIndex: 10 });
+    gsap.set(".hero__content", { zIndex: 1 });
+
+    // Ensure hero elements start at exact natural position
+    gsap.set(".hero__content > *", { x: 0, opacity: 1 });
+    gsap.set(".hero-image-wrapper", { y: 0, x: 0, rotationZ: 0, scale: 1 });
+
+    // Hero Text slides behind profile picture on scroll down
+    gsap.to(".hero__content > *", {
+      x: 360,
+      opacity: 0.22,
+      stagger: 0.04,
+      ease: "power1.inOut",
+      scrollTrigger: {
+        trigger: ".hero",
+        start: "top top",
+        end: "bottom top",
+        scrub: 0.8,
+        invalidateOnRefresh: true,
+        fastScrollEnd: true
+      }
     });
 
-    // 1. About Section - Clean entrance and stays 100% solid
-    gsap.fromTo(".about__panel",
-      { y: 40, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        ease: "power2.out",
-        scrollTrigger: { trigger: ".about", start: "top 85%", once: true }
+    // Hero Profile Card 3D Parallax & Rotation
+    gsap.to(".hero-image-wrapper", {
+      y: 75,
+      x: 25,
+      rotationZ: 6,
+      scale: 0.96,
+      ease: "power1.out",
+      scrollTrigger: {
+        trigger: ".hero",
+        start: "top top",
+        end: "bottom top",
+        scrub: 0.8,
+        invalidateOnRefresh: true,
+        fastScrollEnd: true
       }
-    );
-    gsap.fromTo(".about__stack",
-      { y: 40, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        delay: 0.1,
-        ease: "power2.out",
-        scrollTrigger: { trigger: ".about", start: "top 85%", once: true }
+    });
+
+    // 2. ABOUT SECTION: Signature 3D Door Swing Entrance
+    gsap.set(".about", { perspective: 1400 });
+    gsap.set([".about__panel", ".about__stack"], { clearProps: "transform,opacity", opacity: 1 });
+
+    const aboutTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".about",
+        start: "top 90%",
+        end: "bottom 15%",
+        scrub: 0.9,
+        invalidateOnRefresh: true,
+        fastScrollEnd: true
       }
+    });
+
+    // Phase 1: Panels swing open dramatically in 3D as section enters
+    aboutTl.fromTo(".about__panel",
+      { rotationY: -45, x: -65, opacity: 0.15, transformOrigin: "right center" },
+      { rotationY: 0, x: 0, opacity: 1, transformOrigin: "right center", ease: "power2.out", duration: 1.2 },
+      0
     );
+    aboutTl.fromTo(".about__stack",
+      { rotationY: 45, x: 65, opacity: 0.15, transformOrigin: "left center" },
+      { rotationY: 0, x: 0, opacity: 1, transformOrigin: "left center", ease: "power2.out", duration: 1.2 },
+      0
+    );
+
+    // Skills badges pop in with dynamic spring physics when door opens
     gsap.fromTo(".about__stack span",
-      { scale: 0.6, opacity: 0 },
+      { scale: 0.5, opacity: 0 },
       {
         scale: 1,
         opacity: 1,
-        duration: 0.45,
-        stagger: 0.06,
-        ease: "back.out(1.7)",
-        scrollTrigger: { trigger: ".about__stack", start: "top 85%", once: true }
+        duration: 0.5,
+        stagger: 0.07,
+        ease: "back.out(2)",
+        scrollTrigger: { trigger: ".about__stack", start: "top 82%", once: true }
       }
     );
 
-    // 2. Services Cards - Stagger entrance
+    // 3. SERVICES SECTION: 3D Stagger Entrance
     gsap.fromTo(".service-card",
-      { y: 40, opacity: 0 },
+      { y: 55, opacity: 0, rotationX: 8, transformPerspective: 1000 },
       {
         y: 0,
         opacity: 1,
-        duration: 0.7,
-        stagger: 0.1,
+        rotationX: 0,
+        duration: 0.8,
+        stagger: 0.12,
         ease: "power2.out",
         scrollTrigger: { trigger: ".services", start: "top 85%", once: true }
       }
     );
 
-    // 3. Portfolio Work Cards - Stagger entrance (Solid, sharp, and interactive)
-    gsap.fromTo(".work-card",
-      { y: 40, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.75,
-        stagger: 0.12,
-        ease: "power2.out",
-        scrollTrigger: { trigger: ".portfolio", start: "top 85%", once: true }
+    // 4. PORTFOLIO SECTION: Signature 3D Scrub Card Reveal with Dynamic Tilt
+    gsap.set(".portfolio", { perspective: 1400 });
+
+    const portfolioEnterTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".portfolio",
+        start: "top 88%",
+        end: "top 20%",
+        scrub: 1,
+        invalidateOnRefresh: true,
+        fastScrollEnd: true
       }
+    });
+
+    portfolioEnterTl.fromTo(".portfolio .section-heading",
+      { y: 50, opacity: 0 },
+      { y: 0, opacity: 1, ease: "power2.out", duration: 0.6 },
+      0
     );
 
-    // 4. Certificates Section - Heading and cards
+    const workCards = gsap.utils.toArray(".work-card");
+    workCards.forEach((card, i) => {
+      const isLeft = i % 2 === 0;
+      portfolioEnterTl.fromTo(card,
+        {
+          y: 130 + (i >= 2 ? 30 : 0),
+          opacity: 0,
+          rotationY: isLeft ? -14 : 14,
+          rotationX: 8,
+          transformPerspective: 1200
+        },
+        {
+          y: 0,
+          opacity: 1,
+          rotationY: 0,
+          rotationX: 0,
+          ease: "power2.out",
+          duration: 1
+        },
+        0.1 + i * 0.1
+      );
+    });
+
+    // 5. CERTIFICATES SECTION: 3D Floating Reveal
+    gsap.set(".certificates", { perspective: 1400 });
     gsap.fromTo(".cert-card",
-      { y: 40, opacity: 0 },
+      { y: 65, opacity: 0, rotationX: 6, transformPerspective: 1000 },
       {
         y: 0,
         opacity: 1,
-        duration: 0.75,
-        stagger: 0.1,
+        rotationX: 0,
+        duration: 0.8,
+        stagger: 0.12,
         ease: "power2.out",
         scrollTrigger: { trigger: ".certificates", start: "top 85%", once: true }
       }
     );
 
-    // 5. Timeline Milestones - Smooth staggered entrance
+    // 6. TIMELINE MILESTONES: Smooth Staggered Progression
     gsap.fromTo(".timeline__item",
-      { x: -35, opacity: 0 },
+      { x: -40, opacity: 0 },
       {
         x: 0,
         opacity: 1,
         duration: 0.75,
-        stagger: 0.18,
+        stagger: 0.2,
         ease: "power2.out",
         scrollTrigger: { trigger: ".timeline", start: "top 85%", once: true }
       }
     );
 
-    // 6. Contact Card - Gentle scale in
+    // 7. CONTACT SECTION: Cinematic 3D Depth Card
     gsap.fromTo(".contact__card",
-      { y: 35, opacity: 0, scale: 0.96 },
+      { scale: 0.92, y: 50, rotationX: 5, transformPerspective: 1000, opacity: 0 },
       {
-        y: 0,
-        opacity: 1,
         scale: 1,
-        duration: 0.8,
+        y: 0,
+        rotationX: 0,
+        opacity: 1,
+        duration: 0.85,
         ease: "power2.out",
         scrollTrigger: { trigger: ".contact", start: "top 85%", once: true }
       }
     );
 
-    // 7. Ambient Background Blobs Parallax
-    gsap.to(".ambient--one", { yPercent: 15, scrollTrigger: { scrub: true } });
-    gsap.to(".ambient--two", { yPercent: -15, scrollTrigger: { scrub: true } });
+    // 8. AMBIENT BACKGROUND BLOBS: Smooth Parallax
+    gsap.to(".ambient--one", { yPercent: 18, scrollTrigger: { scrub: true } });
+    gsap.to(".ambient--two", { yPercent: -18, scrollTrigger: { scrub: true } });
   });
 
   ScrollTrigger.refresh();
 };
-
-window.addEventListener("load", () => {
-  bootGsap();
-  setTimeout(() => {
-    if (window.ScrollTrigger) ScrollTrigger.refresh();
-  }, 250);
-});
 
 // Copy Email to Clipboard helper
 document.querySelectorAll("[data-copy-email]").forEach((btn) => {
