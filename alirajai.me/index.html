@@ -18,13 +18,59 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-  <div class="loader" aria-label="Loading website">
-    <div class="loader__logo-container">
-      <img class="loader__logo" src="assets/images/alirajai.png" alt="Ali Rajai Logo">
+<body class="is-loading">
+  <!-- Ultra-Premium Cinematic Preloader -->
+  <div class="loader" id="siteLoader" aria-label="Loading Ali Rajai Portfolio" role="status" aria-live="polite">
+    <!-- Dual Curtain Panels for Cinematic Split Exit -->
+    <div class="loader__curtain loader__curtain--top"></div>
+    <div class="loader__curtain loader__curtain--bottom"></div>
+
+    <!-- Ambient Glow Behind Centerpiece -->
+    <div class="loader__ambient"></div>
+
+    <!-- Center Content Stage -->
+    <div class="loader__stage">
+      <!-- Emblem with Concentric Orbital Rings -->
+      <div class="loader__emblem-wrap">
+        <svg class="loader__orbit loader__orbit--outer" viewBox="0 0 140 140" fill="none">
+          <circle cx="70" cy="70" r="66" stroke="rgba(212, 175, 103, 0.28)" stroke-width="1.5" stroke-dasharray="10 7" />
+        </svg>
+        <svg class="loader__orbit loader__orbit--inner" viewBox="0 0 140 140" fill="none">
+          <circle cx="70" cy="70" r="56" stroke="url(#goldGradientLoader)" stroke-width="1.5" stroke-dasharray="28 14 10 14" />
+          <defs>
+            <linearGradient id="goldGradientLoader" x1="0" y1="0" x2="140" y2="140" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#d4af67" />
+              <stop offset="50%" stop-color="#fff5db" />
+              <stop offset="100%" stop-color="#a86443" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="loader__avatar-box">
+          <img class="loader__avatar" src="assets/images/alirajai.png" alt="Ali Rajai Emblem">
+        </div>
+      </div>
+
+      <!-- Typography Branding -->
+      <div class="loader__brand">
+        <h2 class="loader__name">Ali Rajai</h2>
+        <p class="loader__tagline">Software Engineer &amp; Web Developer</p>
+      </div>
+
+      <!-- Precision Progress Line & Metric -->
+      <div class="loader__progress-panel">
+        <div class="loader__bar-track">
+          <div class="loader__bar-fill" id="loaderBarFill">
+            <span class="loader__bar-glow"></span>
+          </div>
+        </div>
+        <div class="loader__meta">
+          <span class="loader__status" id="loaderStatus">Initializing Experience</span>
+          <span class="loader__counter" id="loaderCounter">00%</span>
+        </div>
+      </div>
     </div>
-    <div class="loader__bar"><span></span></div>
   </div>
+
 
   <div class="cursor-dot"></div>
   <div class="cursor-ring"></div>

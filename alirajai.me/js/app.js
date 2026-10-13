@@ -1,22 +1,132 @@
 const header = document.querySelector("[data-header]");
-const loader = document.querySelector(".loader");
 const navToggle = document.querySelector(".nav-toggle");
 const nav = document.querySelector(".site-nav");
 const cursorDot = document.querySelector(".cursor-dot");
 const cursorRing = document.querySelector(".cursor-ring");
 
-window.addEventListener("load", () => {
-  if (window.gsap) {
-    gsap.to(loader, { autoAlpha: 0, duration: 0.7, delay: 0.35, ease: "power2.out" });
-    gsap.from(".hero .reveal", { y: 36, opacity: 0, duration: 0.85, stagger: 0.12, delay: 0.5, ease: "power3.out" });
+// --- ULTRA-PREMIUM CINEMATIC PRELOADER ORCHESTRATION ---
+const initPreloader = () => {
+  const loaderEl = document.getElementById("siteLoader");
+  if (!loaderEl) return;
+
+  const barFill = document.getElementById("loaderBarFill");
+  const counterEl = document.getElementById("loaderCounter");
+  const statusEl = document.getElementById("loaderStatus");
+  const topCurtain = loaderEl.querySelector(".loader__curtain--top");
+  const bottomCurtain = loaderEl.querySelector(".loader__curtain--bottom");
+  const stage = loaderEl.querySelector(".loader__stage");
+  const ambient = loaderEl.querySelector(".loader__ambient");
+
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Immediate fallback / reduced-motion bypass
+  const dismissInstantly = () => {
+    document.body.classList.remove("is-loading");
+    loaderEl.style.display = "none";
     bootGsap();
-    setTimeout(() => {
-      if (window.ScrollTrigger) ScrollTrigger.refresh();
-    }, 400);
-  } else {
-    loader.style.display = "none";
+    if (window.ScrollTrigger) ScrollTrigger.refresh();
+  };
+
+  if (prefersReducedMotion || !window.gsap) {
+    dismissInstantly();
+    return;
   }
-});
+
+  const statusMilestones = [
+    { threshold: 0, text: "Initializing Core..." },
+    { threshold: 35, text: "Curating Digital Craft..." },
+    { threshold: 70, text: "Polishing Motion..." },
+    { threshold: 96, text: "Experience Ready" }
+  ];
+
+  const progressState = { val: 0 };
+  let isCompleted = false;
+
+  const updateDisplay = (num) => {
+    const clamped = Math.min(100, Math.floor(num));
+    if (counterEl) counterEl.textContent = `${String(clamped).padStart(2, "0")}%`;
+    if (barFill) barFill.style.width = `${clamped}%`;
+
+    if (statusEl) {
+      for (let i = statusMilestones.length - 1; i >= 0; i--) {
+        if (clamped >= statusMilestones[i].threshold) {
+          if (statusEl.textContent !== statusMilestones[i].text) {
+            statusEl.textContent = statusMilestones[i].text;
+          }
+          break;
+        }
+      }
+    }
+  };
+
+  const masterTl = gsap.timeline({
+    paused: true,
+    onComplete: () => {
+      isCompleted = true;
+      loaderEl.style.display = "none";
+    }
+  });
+
+  // Step 1: Smooth luxury progress interpolation from 00% to 100%
+  masterTl.to(progressState, {
+    val: 100,
+    duration: 1.45,
+    ease: "power2.inOut",
+    onUpdate: () => updateDisplay(progressState.val)
+  })
+  // Step 2: Climax beat - subtle scale & fade out of center stage elements
+  .to([stage, ambient], {
+    scale: 0.94,
+    opacity: 0,
+    duration: 0.42,
+    ease: "power2.in"
+  }, "+=0.12")
+  // Step 3: Cinematic dual shutter curtain split
+  .to(topCurtain, {
+    yPercent: -100,
+    duration: 0.82,
+    ease: "power4.inOut"
+  }, "-=0.08")
+  .to(bottomCurtain, {
+    yPercent: 100,
+    duration: 0.82,
+    ease: "power4.inOut"
+  }, "<")
+  // Step 4: Hero reveal cascades in simultaneously as curtains part
+  .fromTo(".hero .reveal", 
+    { y: 38, opacity: 0 },
+    {
+      y: 0,
+      opacity: 1,
+      duration: 0.85,
+      stagger: 0.1,
+      ease: "power3.out",
+      onStart: () => {
+        document.body.classList.remove("is-loading");
+        bootGsap();
+        if (window.ScrollTrigger) ScrollTrigger.refresh();
+      }
+    },
+    "-=0.55"
+  );
+
+  // Play the master sequence
+  masterTl.play();
+
+  // Safety failsafe: If anything stalls, dismiss gracefully
+  setTimeout(() => {
+    if (!isCompleted) {
+      dismissInstantly();
+    }
+  }, 3500);
+};
+
+if (document.readyState === "complete") {
+  initPreloader();
+} else {
+  window.addEventListener("load", initPreloader, { once: true });
+}
+
 
 window.addEventListener("scroll", () => {
   header.classList.toggle("is-scrolled", window.scrollY > 20);
