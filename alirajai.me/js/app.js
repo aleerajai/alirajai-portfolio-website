@@ -705,3 +705,166 @@ document.addEventListener("click", async (e) => {
   showCertToast(`✓ Credential ID "${credId}" copied to clipboard! Paste it on DigiSkills verification page.`);
 });
 
+// ==========================================================================
+// AI Chatbot UI Interactivity
+// ==========================================================================
+const initAIChat = () => {
+  const chatWidget = document.getElementById("aiChatWidget");
+  const chatTrigger = document.getElementById("aiChatTrigger");
+  const chatClose = document.getElementById("aiChatClose");
+  const chatReset = document.getElementById("aiChatReset");
+  const chatBody = document.getElementById("aiChatBody");
+  const chatForm = document.getElementById("aiChatForm");
+  const chatInput = document.getElementById("aiChatInput");
+  const chatChips = document.getElementById("aiChatChips");
+  const chatWindow = document.getElementById("aiChatWindow");
+
+  if (!chatWidget || !chatTrigger) return;
+
+  const assistant = window.AliAIAssistant ? new window.AliAIAssistant() : null;
+
+  const toggleChat = (forceState) => {
+    const isOpen = typeof forceState === "boolean" ? forceState : !chatWidget.classList.contains("is-open");
+    chatWidget.classList.toggle("is-open", isOpen);
+    chatTrigger.setAttribute("aria-expanded", String(isOpen));
+    chatWindow.setAttribute("aria-hidden", String(!isOpen));
+
+    if (isOpen) {
+      setTimeout(() => {
+        if (chatInput) chatInput.focus();
+        scrollToBottom();
+      }, 250);
+    }
+  };
+
+  const scrollToBottom = () => {
+    if (chatBody) {
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+  };
+
+  const appendUserMessage = (text) => {
+    const msgEl = document.createElement("div");
+    msgEl.className = "ai-msg ai-msg--user";
+    msgEl.innerHTML = `<div class="ai-msg__bubble"><p>${escapeHtml(text)}</p></div>`;
+    chatBody.appendChild(msgEl);
+    scrollToBottom();
+  };
+
+  const appendBotMessage = (html) => {
+    const msgEl = document.createElement("div");
+    msgEl.className = "ai-msg ai-msg--bot";
+    msgEl.innerHTML = `
+      <div class="ai-msg__avatar">
+        <img src="assets/images/alirajai.png" alt="Ali AI">
+      </div>
+      <div class="ai-msg__bubble">${html}</div>
+    `;
+    chatBody.appendChild(msgEl);
+    scrollToBottom();
+  };
+
+  const showTypingIndicator = () => {
+    const typingEl = document.createElement("div");
+    typingEl.className = "ai-msg ai-msg--bot ai-msg--typing";
+    typingEl.id = "aiTypingIndicator";
+    typingEl.innerHTML = `
+      <div class="ai-msg__avatar">
+        <img src="assets/images/alirajai.png" alt="Ali AI">
+      </div>
+      <div class="ai-msg__bubble">
+        <div class="ai-typing">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    `;
+    chatBody.appendChild(typingEl);
+    scrollToBottom();
+  };
+
+  const removeTypingIndicator = () => {
+    const typingEl = document.getElementById("aiTypingIndicator");
+    if (typingEl) typingEl.remove();
+  };
+
+  const escapeHtml = (str) => {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  };
+
+  const handleUserQuery = (query) => {
+    const cleanQuery = query.trim();
+    if (!cleanQuery) return;
+
+    appendUserMessage(cleanQuery);
+    if (chatInput) chatInput.value = "";
+
+    showTypingIndicator();
+
+    // Natural assistant typing pause for high-end feel
+    setTimeout(() => {
+      removeTypingIndicator();
+      if (assistant) {
+        const responseHtml = assistant.generateResponse(cleanQuery);
+        appendBotMessage(responseHtml);
+      } else {
+        appendBotMessage("Ali Rajai is a Software Engineer & Web Developer available at alirajai.dev@gmail.com.");
+      }
+    }, 450 + Math.random() * 200);
+  };
+
+  // Event Listeners
+  chatTrigger.addEventListener("click", () => toggleChat());
+  if (chatClose) chatClose.addEventListener("click", () => toggleChat(false));
+
+  if (chatReset) {
+    chatReset.addEventListener("click", () => {
+      chatBody.innerHTML = `
+        <div class="ai-msg ai-msg--bot">
+          <div class="ai-msg__avatar">
+            <img src="assets/images/alirajai.png" alt="Ali AI">
+          </div>
+          <div class="ai-msg__bubble">
+            <p>Chat cleared! 👋 Feel free to ask anything about Ali Rajai's skills, commercial projects, or verified credentials.</p>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  if (chatForm) {
+    chatForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const query = chatInput ? chatInput.value : "";
+      handleUserQuery(query);
+    });
+  }
+
+  if (chatChips) {
+    chatChips.addEventListener("click", (e) => {
+      const chip = e.target.closest(".ai-chip");
+      if (!chip) return;
+      const query = chip.getAttribute("data-query");
+      if (query) handleUserQuery(query);
+    });
+  }
+
+  // Close on Escape
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && chatWidget.classList.contains("is-open")) {
+      toggleChat(false);
+    }
+  });
+
+  // Close when clicking outside chat window
+  document.addEventListener("click", (e) => {
+    if (chatWidget.classList.contains("is-open") && !chatWidget.contains(e.target)) {
+      toggleChat(false);
+    }
+  });
+};
+
+initAIChat();
+
+

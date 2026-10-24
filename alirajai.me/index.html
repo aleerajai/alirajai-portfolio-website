@@ -685,6 +685,83 @@
     </button>
   </div>
 
+  <!-- AI Chatbot Assistant Widget -->
+  <div class="ai-chat" id="aiChatWidget" aria-label="Ali Rajai AI Assistant">
+    <!-- Chat Trigger Button -->
+    <button class="ai-chat__trigger magnetic" id="aiChatTrigger" aria-label="Open AI Assistant" aria-expanded="false">
+      <div class="ai-chat__trigger-glow"></div>
+      <div class="ai-chat__trigger-avatar">
+        <img src="assets/images/alirajai.png" alt="Ali Rajai AI">
+        <span class="ai-chat__status-dot"></span>
+      </div>
+      <span class="ai-chat__trigger-label">
+        <span class="ai-chat__trigger-sparkle">✦</span>
+        <span>Chat with AI</span>
+      </span>
+      <span class="ai-chat__trigger-close-icon">✕</span>
+    </button>
+
+    <!-- Chat Modal Window -->
+    <div class="ai-chat__window" id="aiChatWindow" aria-hidden="true">
+      <div class="ai-chat__header">
+        <div class="ai-chat__header-info">
+          <div class="ai-chat__header-avatar">
+            <img src="assets/images/alirajai.png" alt="Ali Rajai Avatar">
+            <span class="ai-chat__status-dot"></span>
+          </div>
+          <div>
+            <div class="ai-chat__header-name">
+              <strong>Ali Rajai</strong>
+              <span class="ai-badge">AI Assistant</span>
+            </div>
+            <p class="ai-chat__header-sub">Trained on Ali's Skills, Projects &amp; Credentials</p>
+          </div>
+        </div>
+        <div class="ai-chat__header-actions">
+          <button class="ai-chat__btn-icon" id="aiChatReset" aria-label="Reset Conversation" title="Clear Chat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+              <path d="M3 3v5h5"/>
+            </svg>
+          </button>
+          <button class="ai-chat__btn-icon" id="aiChatClose" aria-label="Close Chat" title="Close">✕</button>
+        </div>
+      </div>
+
+      <!-- Quick Suggested Chips -->
+      <div class="ai-chat__chips" id="aiChatChips">
+        <button class="ai-chip" data-query="What services does Ali offer?">💼 Services</button>
+        <button class="ai-chip" data-query="Tell me about Ali's featured projects">🚀 Projects</button>
+        <button class="ai-chip" data-query="How can I hire Ali or get a quote?">🤝 Hire Ali</button>
+        <button class="ai-chip" data-query="What are Ali's verified certificates?">📜 Credentials</button>
+      </div>
+
+      <!-- Messages Body -->
+      <div class="ai-chat__body" id="aiChatBody">
+        <div class="ai-msg ai-msg--bot">
+          <div class="ai-msg__avatar">
+            <img src="assets/images/alirajai.png" alt="Ali AI">
+          </div>
+          <div class="ai-msg__bubble">
+            <p>Hi there! 👋 I am <strong>Ali Rajai's AI Assistant</strong>, pre-trained on his skills, production projects, and verified credentials.</p>
+            <p style="margin-top: 0.5rem;">How can I assist you with your project today?</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Form -->
+      <form class="ai-chat__footer" id="aiChatForm">
+        <input type="text" class="ai-chat__input" id="aiChatInput" placeholder="Ask anything about Ali's work or skills..." autocomplete="off" maxlength="250" required>
+        <button type="submit" class="ai-chat__send-btn" id="aiChatSend" aria-label="Send message">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </form>
+    </div>
+  </div>
+
   <footer class="site-footer" style="justify-content: center; text-align: center;">
     <p>© 2026 Ali Rajai. All rights reserved. Designed & Developed by Ali Rajai.</p>
   </footer>
@@ -721,6 +798,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+  <script src="js/chatbot.js" defer></script>
   <script src="js/app.js" defer></script>
 </body>
 </html>
